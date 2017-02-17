@@ -1,22 +1,42 @@
 package tddmicroexercises.tirepressuremonitoringsystem;
 
+import java.util.Objects;
+
 public class Alarm
 {
-    private final double LowPressureTreshold = 17;
-    private final double HighPressureTreshold = 21;
+    static final double LowPressureTreshold = 17;
+    static final double HighPressureTreshold = 21;
 
-    Sensor sensor = new Sensor();
+    private final Sensor sensor;
 
-    boolean alarmOn = false;
+    private boolean alarmOn = false;
+
+    /**
+     * @deprecated use {@link #Alarm(Sensor)}
+     */
+    @Deprecated
+    public Alarm()
+    {
+        this(new Sensor());
+    }
+
+    protected Alarm(Sensor sensor)
+    {
+        this.sensor = Objects.requireNonNull(sensor);
+    }
 
     public void check()
     {
         double psiPressureValue = sensor.popNextPressurePsiValue();
 
-        if (psiPressureValue < LowPressureTreshold || HighPressureTreshold < psiPressureValue)
+        if (isNotInValidRange(psiPressureValue))
         {
             alarmOn = true;
         }
+    }
+
+    private static boolean isNotInValidRange(double psiPressureValue) {
+        return psiPressureValue < LowPressureTreshold || HighPressureTreshold < psiPressureValue;
     }
 
     public boolean isAlarmOn()
